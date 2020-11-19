@@ -15,7 +15,7 @@ from StringIO import StringIO
 from genshi.filters.html import HTMLSanitizer
 from genshi.input import HTMLParser, ParseError
 from trac.core import Component, TracError, implements
-from trac.mimeview.api import Mimeview, get_mimetype, Context
+from trac.mimeview.api import Mimeview, get_mimetype #,Context
 from trac.perm import IPermissionRequestor
 from trac.resource import ResourceNotFound
 from trac.ticket.model import Ticket
@@ -23,12 +23,13 @@ from trac.util.html import escape
 from trac.util.text import to_unicode
 from trac.util.translation import _
 from trac.versioncontrol.api import NoSuchChangeset, NoSuchNode, \
-                                    RepositoryManager
+    RepositoryManager
 from trac.wiki.api import WikiSystem
 from trac.wiki.formatter import system_message
 from trac.wiki.macros import WikiMacroBase
 from trac.wiki.model import WikiPage
 
+from trac.web.chrome import web_context as get_context
 
 class IncludeMacro(WikiMacroBase):
     """A macro to include other resources in wiki pages.
@@ -83,7 +84,8 @@ class IncludeMacro(WikiMacroBase):
                 return system_message("Error while retrieving file", str(e))
             except TracError, e:
                 return system_message("Error while previewing", str(e))
-            ctxt = Context.from_request(formatter.req)
+            #ctxt = Context.from_request(formatter.req)
+            ctxt = get_context(formatter.req)
         elif source_format == 'wiki':
             # XXX: Check for recursion in page includes. <NPK>
             page_name, page_version = _split_path(source_obj)
@@ -123,7 +125,8 @@ class IncludeMacro(WikiMacroBase):
                     return system_message('Wiki page "%s" does not exist'
                                           % page_name)
             out = page.text
-            ctxt = Context.from_request(formatter.req, 'wiki', source_obj)
+            #ctxt = Context.from_request(formatter.req, 'wiki', source_obj)
+            ctxt = get_context(formatter.req, 'wiki', source_obj)
         elif source_format in ('source', 'browser', 'repos'):
             if 'FILE_VIEW' not in formatter.perm:
                 return ''
@@ -153,15 +156,18 @@ class IncludeMacro(WikiMacroBase):
                                 if field == 'comment' and \
                                         oldval == comment_num:
                                     dest_format = 'text/x-trac-wiki'
-                                    ctxt = Context.from_request(formatter.req,
-                                                                'ticket',
-                                                                ticket_num)
+                                    #ctxt = Context.from_request(formatter.req,
+                                    #                            'ticket',
+                                    #                            ticket_num)
+                                    ctxt = get_context(formatter.req,
+                                        'ticket',
+                                        ticket_num)
                                     out = newval
                                     break
                         if not out:
                             return system_message(
-                                   "Comment %s does not exist for Ticket %s"
-                                   % (comment_num, ticket_num))
+                                "Comment %s does not exist for Ticket %s"
+                                % (comment_num, ticket_num))
                     else:
                         system_message("Unsupported ticket field %s"
                                        % source_format)
@@ -212,7 +218,8 @@ class IncludeMacro(WikiMacroBase):
             out = content.read()
             if dest_format is None:
                 dest_format = node.content_type or get_mimetype(path, out)
-            ctxt = Context.from_request(formatter.req, 'source', path)
+            #ctxt = Context.from_request(formatter.req, 'source', path)
+            ctxt = get_context(formatter.req, 'source', path)
 
         return out, ctxt, dest_format
 

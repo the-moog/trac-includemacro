@@ -1,6 +1,8 @@
 IncludeMacro 4.0.0 (not yet released)
  Moved to git https://github.com/the-moog/trac-includemacro
 
+ * #13911: Attempt to make trac 1.4 compatible
+
 
 IncludeMacro 3.0.0 (not yet released) - trunk
  resolved issues:

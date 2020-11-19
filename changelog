@@ -1,3 +1,7 @@
+IncludeMacro 4.0.0 (not yet released)
+ Moved to git https://github.com/the-moog/trac-includemacro
+
+
 IncludeMacro 3.0.0 (not yet released) - trunk
  resolved issues:
  * #2413: Replaced call to deprecated render_macro with expand_macro (0.11 compatibility).
